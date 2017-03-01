@@ -122,6 +122,13 @@ void NodeRequest::HandleCallback(const Nan::FunctionCallbackInfo<v8::Value>& inf
 }
 
 void NodeRequest::Execute() {
+    asyncExecute = std::make_unique<mbgl::util::AsyncTask>([this] { doExecute(); });
+    asyncExecute->send();
+}
+
+void NodeRequest::doExecute() {
+    Nan::HandleScope scope;
+
     v8::Local<v8::Value> argv[] = { handle() };
 
     Nan::MakeCallback(Nan::To<v8::Object>(target->handle()->GetInternalField(1)).ToLocalChecked(), "request", 1, argv);
@@ -139,6 +146,7 @@ NodeRequest::NodeAsyncRequest::~NodeAsyncRequest() {
     if (request) {
         // Remove the callback function because the AsyncRequest was
         // canceled and we are no longer interested in the result.
+        request->asyncExecute.reset();
         request->callback = {};
         request->asyncRequest = nullptr;
     }
