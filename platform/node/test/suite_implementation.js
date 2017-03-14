@@ -30,8 +30,8 @@ module.exports = function (style, options, callback) {
     var watchdog = setTimeout(function () {
         timedOut = true;
         map.dumpDebugLogs();
-        callback(new Error('timed out after 20 seconds'));
-    }, 20000);
+        callback(new Error('timed out after 5 seconds'));
+    }, 5000);
 
     options.debug = {
         tileBorders: options.debug,
